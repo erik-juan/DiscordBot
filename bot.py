@@ -1,24 +1,17 @@
-
 import os
 import discord
 import numpy as np
-from discord.ext import commands, tasks
+from discord.ext import commands, tasks #Commands for bot listening, tasks TODO outside of commands
 from discord.ext.tasks import loop
 from dotenv import Dotenv
 import time
 import asyncio
-#import json
-#import requests
 
-#initialize variables for later
-juanShot = 0
-erikShot = 0
-mackShot = 0
-dadShot = 0
+
+#initialize dictionaries and lists for later
 people = {}
 timersKey = {}
 timeVals = []
-
 
 
 
@@ -29,21 +22,12 @@ GUILD = '623888011918180372'
 client = discord.Client()
 
 # Set prefix
-bot = commands.Bot(command_prefix = '/')
-
-#dictionary api
-language = "en-gb"
-word_id = "example"
-app_id = "ff5dc17c"
-app_key = " ef439ee7c67ce69d35aea42ee3c2cfe7"
+bot = commands.Bot(command_prefix = '/') #bot will listen for "/"
 
 
 @bot.event # print when connected
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
-
-
-
 
 
 # Rolling d100
@@ -55,16 +39,7 @@ async def on_ready():
 
         response = '**' + author + ' rolls a ' + number + '**'  # Create response
         await ctx.send(response)  # Send response
-        #Print online members
-        onlineMember = bot.user
-
-
-
-
-
-
-
-
+        
 
 @bot.command(name ='nug') # look for prefix + 'nug'
 async def rolling(ctx):
@@ -96,85 +71,14 @@ async def rolling(ctx):
                 ask =  "*" + user.name + " rolls a " + number+"*"
                 await ctx.send(ask)
 
-# @bot.command(name='shot')
-# async def takingshot(ctx):
-#     global juanShot
-#     global mackShot
-#     global erikShot
-#     global dadShot
-#     success = False
-#
-#     author = str(ctx.message.author)
-#     me = ctx.message.content
-#     print(me)
-#
-#     if (me.find('mack') != -1):
-#         success = True
-#         mackShot += 1
-#         sstr = str(mackShot)
-#         shotSay = 'Mack has taken ' + sstr + ' shots'
-#         await ctx.send(shotSay)
-#
-#     if(me.find('mom') != -1):
-#         success = True
-#         juanShot += 1
-#         sstr = str(juanShot)
-#         shotSay = 'mom has taken ' + sstr + ' shots'
-#         await ctx.send(shotSay)
-#
-#     if (me.find('juan') != -1):
-#         success = True
-#         juanShot += 1
-#         sstr = str(juanShot)
-#         shotSay = 'mom has taken ' + sstr + ' shots'
-#         await ctx.send(shotSay)
-#
-#     if(me.find('erik') != -1):
-#         success = True
-#         erikShot += 1
-#         sstr = str(erikShot)
-#         shotSay = 'Erik has taken ' + sstr + ' shots'
-#         await ctx.send(shotSay)
-#     if(me.find('dad') != -1):
-#         success = True
-#         dadShot += 1
-#         sstr = str(dadShot)
-#         shotSay = 'Dad has taken ' + sstr + ' shots'
-#         await ctx.send(shotSay)
-#
-#
-#     if(success == False):
-#
-#         await ctx.send('AnOther OnE FaLls')
-#         if (author == 'ToyotaPrius#0656'):
-#             mackShot += 1
-#             sstr = str(mackShot)
-#             shotSay = 'Mack has taken ' + sstr + ' shots'
-#             await ctx.send(shotSay)
-#
-#         if (author == 'Juan#5791'):
-#             juanShot += 1
-#             sstr = str(juanShot)
-#             shotSay = 'mom has taken ' + sstr + ' shots'
-#             await ctx.send(shotSay)
-#
-#         if (author == 'OldManPoole#3601'):
-#             erikShot += 1
-#             sstr = str(erikShot)
-#             shotSay = 'Erik has taken ' + sstr + ' shots'
-#             await ctx.send(shotSay)
-#         if (author == 'Funky King#2073'):
-#             dadShot += 1
-#             sstr = str(dadShot)
-#             shotSay = 'Dad has taken ' + sstr + ' shots'
-#             await ctx.send(shotSay)
-
+#Reset Shot Counter
 @bot.command(name='clearShot')
 async def clear(ctx):
     await ctx.send('Clearing shots')
     global people
     people ={}
     
+#/shot "name" keeps track of shots for "name"    
 @bot.command(name = 'shot')
 async def shots(ctx):
     global people
@@ -204,7 +108,7 @@ async def shots(ctx):
         print(people)
         print('else')
 
-
+#prints how many shots have been taken
 @bot.command(name='howmany')
 async def count(ctx):
     for keys in people:
@@ -213,7 +117,7 @@ async def count(ctx):
         await ctx.send(message)
 
     
-
+#finds a random madlib from website
 @bot.command(name='lib')
 async def lib(ctx):
     number1 = str(np.random.randint(0, 1))
@@ -223,6 +127,7 @@ async def lib(ctx):
     link = 'https://www.madtakes.com/libs/' + number1 + number2 + number3 + '' + '.html'
     await ctx.send(link)
 
+#sets up timer for when someone has to get on WOW
 @bot.command(name ='giveme')
 async def lib(ctx):
     global timersKey
@@ -233,20 +138,21 @@ async def lib(ctx):
     min = int(str(me.replace('/giveme ', '')))
     min = int(str(me.replace('/giveme', '')))
     
-    minStr = str(min)
+    minStr = str(min) 
     await ctx.send(author + " has " + minStr + " minutes to start playing WOW")
     
-    start = (time.time())/60
-    chn = ctx
-    timersKey.update({author:[min,start,chn]})
+    start = (time.time())/60 #set start time
+    chn = ctx #save the message context. Used to send the message back to the same guild it came from
+    timersKey.update({author:[min,start,chn]}) #update timer dictionary with list of values 
     print(timersKey)
     
+#print out timer for message author
 @bot.command(name = 'timer')
 async def lib(ctx):
     global timersKey
     author = str(ctx.message.author)
     
-    if author in timersKey:
+    if author in timersKey: #if the author is in 
         list = timersKey.get(author)
         timeLeft = int(list[0] - ((time.time() /60 )- list[1] ))
         
@@ -254,35 +160,29 @@ async def lib(ctx):
     else:
         await ctx.send("You do not have a timer")
         
-# async def timers():
-#     global timersKey
-#     await bot.wait_until_ready()
-#      
-#     for keys in timersKey:
-#         ready = time.time() - timersKey.get(keys[1])
-#         print(timersKey)
-#          
-#     await asyncio.sleep(5)
+#Create a task to check for timer end and send message (loops once a second)
 @tasks.loop(seconds=1)
 async def fun():
     global timersKey
     
+    #loop through all keys
     for keys in timersKey:
         list = timersKey.get(keys)
         readyCheck = (time.time() /60 ) - list[1] 
         
+        #if the timer is up send message to same guild it came from. (using context in dict)
         if (readyCheck >= list[0]):
             print(keys + 'is ready')
-            timersKey.pop(keys)
+            timersKey.pop(keys) #detele the dictionary value
             print(timersKey)
-            channel = list[2]
-            await channel.send('@' + keys + ' needs to start playing WOW right fucking now')
+            channel = list[2] #get contect from dictionary
+            await channel.send('@' + keys + ' needs to start playing WOW right fucking now') #send message
             return
         else:
             print(readyCheck)
         print('looping')
     
-fun.start()
+fun.start() #start looping the timer function
 
 
-bot.run(TOKEN)
+bot.run(TOKEN) #run bot
