@@ -160,6 +160,16 @@ async def lib(ctx):
     else:
         await ctx.send("You do not have a timer")
         
+#Print out all active timers
+@bot.command(name = 'alltimers')
+async def lib(ctx):
+    global timersKey
+    for keys in timersKey: #loop through all the people
+        print(keys)
+        list = timersKey.get(keys) #get the values
+        timeLeft = int(list[0] - ((time.time() /60 )- list[1] )) #calculate time left
+        await ctx.send(keys + " has " + str(timeLeft) + " minutes to start playing WoW")
+        
 #Create a task to check for timer end and send message (loops once a second)
 @tasks.loop(seconds=1)
 async def fun():
