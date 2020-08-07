@@ -12,6 +12,39 @@ import asyncio
 people = {}
 timersKey = {}
 timeVals = []
+pollCreator = ''
+pollStep = 0
+charResp = 'a'
+pollDict = {}
+fullResponse = ''
+emojiResponse = []
+
+emojiLetters =  ["\N{REGIONAL INDICATOR SYMBOL LETTER A}",
+"\N{REGIONAL INDICATOR SYMBOL LETTER B}",
+"\N{REGIONAL INDICATOR SYMBOL LETTER C}",
+"\N{REGIONAL INDICATOR SYMBOL LETTER D}",
+"\N{REGIONAL INDICATOR SYMBOL LETTER E}", 
+"\N{REGIONAL INDICATOR SYMBOL LETTER F}",
+"\N{REGIONAL INDICATOR SYMBOL LETTER G}",
+"\N{REGIONAL INDICATOR SYMBOL LETTER H}",
+"\N{REGIONAL INDICATOR SYMBOL LETTER I}",
+"\N{REGIONAL INDICATOR SYMBOL LETTER J}",
+"\N{REGIONAL INDICATOR SYMBOL LETTER K}",
+"\N{REGIONAL INDICATOR SYMBOL LETTER L}",
+"\N{REGIONAL INDICATOR SYMBOL LETTER M}",
+"\N{REGIONAL INDICATOR SYMBOL LETTER N}",
+"\N{REGIONAL INDICATOR SYMBOL LETTER O}",
+"\N{REGIONAL INDICATOR SYMBOL LETTER P}",
+"\N{REGIONAL INDICATOR SYMBOL LETTER Q}",
+"\N{REGIONAL INDICATOR SYMBOL LETTER R}",
+"\N{REGIONAL INDICATOR SYMBOL LETTER S}",
+"\N{REGIONAL INDICATOR SYMBOL LETTER T}",
+"\N{REGIONAL INDICATOR SYMBOL LETTER U}",
+"\N{REGIONAL INDICATOR SYMBOL LETTER V}",
+"\N{REGIONAL INDICATOR SYMBOL LETTER W}",
+"\N{REGIONAL INDICATOR SYMBOL LETTER X}",
+"\N{REGIONAL INDICATOR SYMBOL LETTER Y}",
+"\N{REGIONAL INDICATOR SYMBOL LETTER Z}"]
 
 
 
@@ -191,8 +224,88 @@ async def fun():
         else:
             print(readyCheck)
         print('looping')
+
+#Start poll command
+@bot.command(name = 'poll')
+async def lib(ctx):
+    global pollCreator
+    global pollStep
+    global pollDict
     
+    if (pollStep != 0):
+        await ctx.send("Someone is already making a poll")
+        return
+    
+    pollStep = 1 #Change the step of poll creation
+    pollCreator = str(ctx.message.author) #write who is creating poll
+    pollStart = time.time() / 60
+    pollEnd = pollStart + 60
+    pollDict.update({pollCreator:[pollStart,pollEnd,ctx]})
+    await ctx.send(pollCreator + ' please type a question')
+    
+
+@bot.event
+async def on_message(message):
+    global pollCreator
+    global pollDict
+    global pollStep
+    global charResp
+    global fullResponse
+    global emojiResponse
+    global emojiLetters
+    if (str(message.author) == pollCreator):
+        if(pollStep == 1):
+            list = pollDict.get(pollCreator)
+            (pollDict[pollCreator]).append(str(message.content))
+            #print(list)
+            await message.delete()
+            await message.channel.send('Type the responses separated by commas')
+            pollStep = 2
+            await bot.process_commands(message)
+            return
+        if(pollStep == 2):
+            (pollDict[pollCreator]).append(str(message.content))
+            list = pollDict.get(pollCreator)
+            #send the poll message
+            print(list)
+            question = list[3]
+            response = list[4]
+            splitResponse = response.split(',')
+            print(splitResponse)
+            
+            fullResponse = '**' + question + '** \n'
+            n = 0
+            
+            for i in splitResponse:
+                
+                emojiResponse.append(':regional_indicator_' + charResp + ':')
+                
+                charResp = ord(charResp[0]) + 1
+                charResp = str(chr(charResp))
+                fullResponse = fullResponse + splitResponse[n] + ': ' + emojiResponse[n] +'\n'
+                n +=1
+                
+            
+            chn = list[2]
+            await message.delete()
+            msg = await message.channel.send(fullResponse)
+            y = 0
+            for  i in splitResponse:
+                emojiResponse[y].replace('_' , ' ')
+                emojiResponse[y].upper()
+                await msg.add_reaction(emojiLetters[y]) #need to figure out this unicode thing
+                y += 1
+            
+                                    
+            pollStep = 0
+            n =0
+            
+            
+    else:
+        await bot.process_commands(message)
+        return
+    
+    await bot.process_commands(message)
+#Start bot Start functions    
 fun.start() #start looping the timer function
-
-
 bot.run(TOKEN) #run bot
