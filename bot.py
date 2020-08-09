@@ -3,7 +3,6 @@ import discord
 import numpy as np
 from discord.ext import commands, tasks #Commands for bot listening, tasks TODO outside of commands
 from discord.ext.tasks import loop
-from dotenv import Dotenv
 import time
 import asyncio
 
@@ -49,8 +48,7 @@ emojiLetters =  ["\N{REGIONAL INDICATOR SYMBOL LETTER A}",
 
 
 
-dotenv = Dotenv('/home/pi/Documents/DiscordBot/.env')
-TOKEN = str(dotenv['DISCORD_TOKEN']) + 'Y'
+TOKEN = os.getenv('DISCORD_SECRET')
 GUILD = '623888011918180372'
 client = discord.Client()
 
