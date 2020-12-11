@@ -1,9 +1,7 @@
 import os
 import requests
 import json
-from dotenv import load_dotenv
 
-load_dotenv()
 STOKEN = os.getenv("SPOTIFY_TOKEN")
 user_id = os.getenv("USER_ID")
 print(user_id)

@@ -6,7 +6,6 @@ from discord.ext.tasks import loop
 import time
 import asyncio
 # NEW IMPORTS
-from dotenv import load_dotenv
 from spotifyFunction import create_playlist, removePlaylist, AddSong, getURI, get_userplaylist
 
 # initialize dictionaries and lists for later
@@ -327,6 +326,9 @@ async def lib(ctx):
 async def lib(ctx):
     global STOKEN
     global playList
+
+    me = ctx.message.content  # read message
+    me = me.lower()  # set to lower case
 
     noCommand = str(me.replace('/addsong ', ''))
     both = noCommand.split(' ')
