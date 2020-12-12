@@ -2,9 +2,7 @@ import os
 import requests
 import json
 
-STOKEN = os.getenv("SPOTIFY_TOKEN")
-user_id = os.getenv("USER_ID")
-print(user_id)
+USER_ID = os.getenv("USER_ID")
 
 def get_userplaylist(TOKEN,user_id):
 
@@ -46,7 +44,7 @@ def create_playlist(TOKEN,user_id):
 
 
 #read playlists
-playlistResponse = get_userplaylist(STOKEN,user_id)
+playlistResponse = get_userplaylist(STOKEN,USER_ID)
 items = playlistResponse['items']
 #Check if playlist already created
 playlistNames = []
@@ -64,7 +62,7 @@ print(playlistNames)
 # if keys['name'] == 'Weenie Bot Playlist':
 #     print("There is Already a Playlist")
 # else:
-#     pid = create_playlist(TOKEN, user_id)
+#     pid = create_playlist(TOKEN, USER_ID)
 #     print(pid)
 #     Print("Playlist Created")
 if 'Weenie Bot Playlist' in playlistNames:
@@ -72,7 +70,7 @@ if 'Weenie Bot Playlist' in playlistNames:
     print(playList)
 
 else:
-    playList = create_playlist(STOKEN,user_id)
+    playList = create_playlist(STOKEN,USER_ID)
     print(playList)
 
 

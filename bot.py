@@ -51,14 +51,14 @@ emojiLetters = ["\N{REGIONAL INDICATOR SYMBOL LETTER A}",
                 "\N{REGIONAL INDICATOR SYMBOL LETTER Z}"]
 
 TOKEN = os.getenv('DISCORD_SECRET')
-user_id = os.getenv('user_id')
-client_id = os.getenv('client_id')
+USER_ID = os.getenv('USER_ID')
+CLIENT_ID = os.getenv('CLIENT_ID')
 REFRESH_TOKEN = os.getenv('REFRESH_TOKEN')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 
 
 
-resp = refreshAuthorization(REFRESH_TOKEN,client_id,CLIENT_SECRET)
+resp = refreshAuthorization(REFRESH_TOKEN,CLIENT_ID,CLIENT_SECRET)
 STOKEN = resp['access_token']
 refreshTimer = time.time()
 print("Token Refreshed")
@@ -76,7 +76,7 @@ async def on_ready():
     global playList
     global playListOnTime
     # read playlists
-    playlistResponse = get_userplaylist(STOKEN, user_id)
+    playlistResponse = get_userplaylist(STOKEN, USER_ID)
     items = playlistResponse['items']
     # Check if playlist already created
     playlistNames = []
@@ -95,7 +95,7 @@ async def on_ready():
         print(playList)
 
     else:
-        playList = create_playlist(STOKEN, user_id)
+        playList = create_playlist(STOKEN, USER_ID)
         print(playList)
 
     playListOnTime = time.time()/60
@@ -258,7 +258,7 @@ async def fun():
     global playList
     global playListOnTime
     global STOKEN
-    global user_id
+    global USER_ID
     global refreshTimer
 
     # loop through all keys
@@ -279,7 +279,7 @@ async def fun():
         print('looping')
     #refresh access token
     if time.time() - refreshTimer > 3000:
-        resp = refreshAuthorization(REFRESH_TOKEN,client_id,CLIENT_SECRET)
+        resp = refreshAuthorization(REFRESH_TOKEN,CLIENT_ID,CLIENT_SECRET)
         STOKEN = resp['access_token']
         refreshTimer = time.time()
         print("Token Refreshed")
@@ -292,7 +292,7 @@ async def fun():
 
         #creat new
         # read playlists
-        playlistResponse = get_userplaylist(STOKEN, user_id)
+        playlistResponse = get_userplaylist(STOKEN, USER_ID)
         items = playlistResponse['items']
         # Check if playlist already created
         playlistNames = []
@@ -311,7 +311,7 @@ async def fun():
             print(playList)
 
         else:
-            playList = create_playlist(STOKEN, user_id)
+            playList = create_playlist(STOKEN, USER_ID)
             print(playList)
 
         playListOnTime = time.time() / 60
@@ -330,7 +330,7 @@ async def lib(ctx):
     #restart playlist
     #creat new
     # read playlists
-    playlistResponse = get_userplaylist(STOKEN, user_id)
+    playlistResponse = get_userplaylist(STOKEN, USER_ID)
     items = playlistResponse['items']
     # Check if playlist already created
     playlistNames = []
@@ -349,7 +349,7 @@ async def lib(ctx):
         print(playList)
 
     else:
-        playList = create_playlist(STOKEN, user_id)
+        playList = create_playlist(STOKEN, USER_ID)
         print(playList)
 
     playListOnTime = time.time() / 60
@@ -403,7 +403,7 @@ async def lib(ctx):
     if len(both) > 1:
         song_name = both[0]
         artist = both[1]
-        songToAdd = getURI(STOKEN,user_id,song_name,artist)
+        songToAdd = getURI(STOKEN,USER_ID,song_name,artist)
 
     else:
         await ctx.send("Put a comma between the artist and the song")
