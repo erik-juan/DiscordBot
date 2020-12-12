@@ -6,7 +6,7 @@ from discord.ext.tasks import loop
 import time
 import asyncio
 # NEW IMPORTS
-from spotifyFunction import create_playlist, removePlaylist, AddSong, getURI, get_userplaylist
+from spotifyFunction import create_playlist, removePlaylist, AddSong, getURI, get_userplaylist, refreshAuthorization
 
 # initialize dictionaries and lists for later
 people = {}
@@ -51,8 +51,17 @@ emojiLetters = ["\N{REGIONAL INDICATOR SYMBOL LETTER A}",
                 "\N{REGIONAL INDICATOR SYMBOL LETTER Z}"]
 
 TOKEN = os.getenv('DISCORD_SECRET')
-STOKEN = os.getenv('SPOTIFY_TOKEN')
 user_id = os.getenv('user_id')
+client_id = os.getenv('client_id')
+REFRESH_TOKEN = os.getenv('REFRESH_TOKEN')
+CLIENT_SECRET = os.getenv('CLIENT_SECRET')
+
+
+
+resp = refreshAuthorization(REFRESH_TOKEN,client_id,CLIENT_SECRET)
+STOKEN = resp['access_token']
+refreshTimer = time.time()
+print("Token Refreshed")
 GUILD = '623888011918180372'
 client = discord.Client()
 
@@ -250,6 +259,7 @@ async def fun():
     global playListOnTime
     global STOKEN
     global user_id
+    global refreshTimer
 
     # loop through all keys
     for keys in timersKey:
@@ -267,8 +277,15 @@ async def fun():
         else:
             print(readyCheck)
         print('looping')
+    #refresh access token
+    if time.time() - refreshTimer > 3000:
+        resp = refreshAuthorization(REFRESH_TOKEN,client_id,CLIENT_SECRET)
+        STOKEN = resp['access_token']
+        refreshTimer = time.time()
+        print("Token Refreshed")
+
     #check spotify end
-    playListOffTime = playListOnTime + 5
+    playListOffTime = playListOnTime + 360
     if (playListOffTime - (time.time()/60)) < 0:
         #remove playlist
         removePlaylist(STOKEN,playList)
@@ -300,7 +317,55 @@ async def fun():
         playListOnTime = time.time() / 60
 
 
+#delete playlist restart timer
+@bot.command(name='restartPlaylistEverything')
+async def lib(ctx):
+    global playList
+    global STOKEN
+    global playListOnTime
 
+    #delete playlist
+    removePlaylist(STOKEN,playList)
+
+    #restart playlist
+    #creat new
+    # read playlists
+    playlistResponse = get_userplaylist(STOKEN, user_id)
+    items = playlistResponse['items']
+    # Check if playlist already created
+    playlistNames = []
+
+    for keys in items:
+        playlistNames.append(keys['name'])
+        name = keys['name']
+        if name == 'Weenie Bot Playlist':
+            print(keys['id'])
+            playList = keys['id']
+
+    print(playlistNames)
+
+    if 'Weenie Bot Playlist' in playlistNames:
+        print('There is already a Play List')
+        print(playList)
+
+    else:
+        playList = create_playlist(STOKEN, user_id)
+        print(playList)
+
+    playListOnTime = time.time() / 60
+    await ctx.send("Playlist Restarted")
+
+
+
+
+#get playlist URL
+@bot.command(name = 'playlist')
+async def lib(ctx):
+    global playList
+
+    #send the current playlist
+    message = "The current playlist is:  " + "https://open.spotify.com/playlist/" + playList
+    await ctx.send(message)
 
 
 # Start poll command
@@ -331,18 +396,24 @@ async def lib(ctx):
     me = me.lower()  # set to lower case
 
     noCommand = str(me.replace('/addsong ', ''))
-    both = noCommand.split(' ')
-    song_name = both[0]
-    artist = both[1]
-    songToAdd = getURI(STOKEN,user_id,song_name,artist)
+    both = noCommand.split(', ')
+    
+    songToAdd = 0
+
+    if len(both) > 1:
+        song_name = both[0]
+        artist = both[1]
+        songToAdd = getURI(STOKEN,user_id,song_name,artist)
+
+    else:
+        await ctx.send("Put a comma between the artist and the song")
 
 
     if songToAdd == 0:
         await ctx.send('This is not a song')
     else:
         await ctx.send('Song Added')
-
-    AddSong(STOKEN,songToAdd,playList)
+        AddSong(STOKEN,songToAdd,playList)
 
 
 

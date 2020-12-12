@@ -1,5 +1,6 @@
 import requests
 import json
+import base64
 
 def get_userplaylist(TOKEN,user_id):
 
@@ -21,7 +22,7 @@ def get_userplaylist(TOKEN,user_id):
 def create_playlist(TOKEN,user_id):
     request_body = json.dumps({
         "name": "Weenie Bot Playlist",
-        "description": "descript",
+        "description": "The official Weenie Butt General PLaylist",
         "public": False
     })
 
@@ -54,7 +55,11 @@ def getURI(TOKEN, user_id, song_name, artist):
     response_json = response.json()
     songToAdd = response_json["tracks"]["items"]
 
-    id = songToAdd[0]["uri"]
+    if songToAdd == []:
+        id = 0
+
+    else:
+        id = songToAdd[0]["uri"]
 
     return id
 
@@ -99,3 +104,73 @@ def removePlaylist(TOKEN,Plist):
             "Authorization": "Bearer {}".format(TOKEN)
         }
     )
+
+def authorize(client_secret):
+    query = "https://accounts.spotify.com/authorize"
+
+    reponse = requests.post(
+        query,
+        json={
+            "client_id": [client_secret],
+            "response_type": "token",
+            "redirect_uri": "http://192.168.0.4" 
+        },
+        headers={
+            "content-type": "discordintegration/json",
+       
+        }
+        
+        )
+    response_json = response.json()
+    return response_json
+
+def requestAuthorization(REFRESH_TOKEN,CLIENT_ID,CLIENT_SECRET):
+    query = "https://accounts.spotify.com/api/token"
+    method = "POST"
+    client_creds = f"{CLIENT_ID}:{CLIENT_SECRET}"
+    client_creds64 = base64.b64encode(client_creds.encode())
+    token_data = {
+        "grant_type": "client_credentials"
+
+        }
+    tHeader = {
+        "Authorization": f"Basic {client_creds64.decode()}",
+        }
+
+    response = requests.post(
+        query,
+        data=token_data,
+        headers = tHeader
+        
+        )
+
+    response_json = response.json()
+
+    return response_json
+
+def refreshAuthorization(REFRESH_TOKEN,CLIENT_ID,CLIENT_SECRET):
+    query = "https://accounts.spotify.com/api/token"
+    method = "POST"
+    client_creds = f"{CLIENT_ID}:{CLIENT_SECRET}"
+    client_creds64 = base64.b64encode(client_creds.encode())
+    
+    token_data = {
+        "grant_type": "refresh_token",
+        "refresh_token": REFRESH_TOKEN,
+        
+
+        }
+    tHeader = {
+        "Authorization": f"Basic {client_creds64.decode()}"
+        }
+
+    response = requests.post(
+        query,
+        data=token_data,
+        headers = tHeader
+        
+        )
+
+    response_json = response.json()
+
+    return response_json
