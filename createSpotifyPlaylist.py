@@ -4,7 +4,7 @@ import json
 
 USER_ID = os.getenv("USER_ID")
 
-def get_userplaylist(TOKEN,USER_ID):
+def get_userplaylist(TOKEN,user_id):
 
     query = "https://api.spotify.com/v1/me/playlists"
 
@@ -21,14 +21,14 @@ def get_userplaylist(TOKEN,USER_ID):
 
 
 
-def create_playlist(TOKEN,USER_ID):
+def create_playlist(TOKEN,user_id):
     request_body = json.dumps({
         "name": "Weenie Bot Playlist",
         "description": "descript",
         "public": False
     })
 
-    query = "https://api.spotify.com/v1/users/{}/playlists".format(USER_ID)
+    query = "https://api.spotify.com/v1/users/{}/playlists".format(user_id)
     response = requests.post(
         query,
         data=request_body,
@@ -44,7 +44,7 @@ def create_playlist(TOKEN,USER_ID):
 
 
 #read playlists
-playlistResponse = get_userplaylist(STOKEN,USER_ID)
+playlistResponse = get_userplaylist(STOKEN,user_id)
 items = playlistResponse['items']
 #Check if playlist already created
 playlistNames = []
