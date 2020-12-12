@@ -9,6 +9,7 @@ verify_ssl = true
 discord = "*"
 numpy = "*"
 pipfile = "*"
+requests = "*"
 
 [requires]
 python_version = "3.7"
