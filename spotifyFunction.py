@@ -2,7 +2,7 @@ import requests
 import json
 import base64
 
-def get_userplaylist(TOKEN,user_id):
+def get_userplaylist(TOKEN,USER_ID):
 
     query = "https://api.spotify.com/v1/me/playlists"
 
@@ -19,14 +19,14 @@ def get_userplaylist(TOKEN,user_id):
 
 
 
-def create_playlist(TOKEN,user_id):
+def create_playlist(TOKEN,USER_ID):
     request_body = json.dumps({
         "name": "Weenie Bot Playlist",
         "description": "The official Weenie Butt General PLaylist",
         "public": False
     })
 
-    query = "https://api.spotify.com/v1/users/{}/playlists".format(user_id)
+    query = "https://api.spotify.com/v1/users/{}/playlists".format(USER_ID)
     response = requests.post(
         query,
         data=request_body,
@@ -40,7 +40,7 @@ def create_playlist(TOKEN,user_id):
     # playlist id
     return response_json["id"]
 
-def getURI(TOKEN, user_id, song_name, artist):
+def getURI(TOKEN, USER_ID, song_name, artist):
     query = "https://api.spotify.com/v1/search?query=track%3A{}+artist%3A{}&type=track&offset=0&limit=20".format(
         song_name,
         artist
@@ -81,7 +81,7 @@ def AddSong(TOKEN, songToAdd, playListID):
 
     return response_json
 
-def getItems(TOKEN, user_id, Plist):
+def getItems(TOKEN, USER_ID, Plist):
     query = "https://api.spotify.com/v1/playlists/{}/tracks".format(Plist)
 
     response = requests.get(
