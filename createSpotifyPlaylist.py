@@ -44,7 +44,7 @@ def create_playlist(TOKEN,user_id):
 
 
 #read playlists
-playlistResponse = get_userplaylist(STOKEN,user_id)
+playlistResponse = get_userplaylist(STOKEN,USER_ID)
 items = playlistResponse['items']
 #Check if playlist already created
 playlistNames = []
