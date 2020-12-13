@@ -58,7 +58,6 @@ CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 
 
 
-
 resp = refreshAuthorization(REFRESH_TOKEN,CLIENT_ID,CLIENT_SECRET)
 STOKEN = resp['access_token']
 refreshTimer = time.time()
@@ -320,7 +319,15 @@ async def fun():
 
         playListOnTime = time.time() / 60
 
-
+#Check playlist timer
+@bot.command(name='playlisttime')
+async def lib(ctx):
+    global playListOnTime
+    
+    playListOffTime = playListOnTime + 360
+    timer = str((int(playListOffTime - time.time()/60)))
+    message = "The playlist has **" + timer + "** minutes before it self destructs"
+    await ctx.send(message)
 #delete playlist restart timer
 @bot.command(name='restartPlaylistEverything')
 async def lib(ctx):
