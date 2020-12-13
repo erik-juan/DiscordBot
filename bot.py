@@ -58,15 +58,16 @@ CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 
 
 
+
 resp = refreshAuthorization(REFRESH_TOKEN,CLIENT_ID,CLIENT_SECRET)
 STOKEN = resp['access_token']
 refreshTimer = time.time()
 print("Token Refreshed")
-GUILD = '623888011918180372'
+intents = discord.Intents.all()
 client = discord.Client()
 
 # Set prefix
-bot = commands.Bot(command_prefix='/')  # bot will listen for "/"
+bot = commands.Bot(command_prefix='/',intents=intents)  # bot will listen for "/"
 
 
 @bot.event  # print when connected
@@ -129,6 +130,7 @@ async def rolling(ctx):
 
 @bot.command(name='rollforgold')  # look for prefix+'roll'
 async def rolling(ctx):
+    print("Rolling for Gold")
     number = str(np.random.randint(1, 100))  # find random number
     author = str(ctx.message.author)  # get author
     author = author[:-5]  # delete author number
@@ -137,12 +139,14 @@ async def rolling(ctx):
     # await ctx.send(response)  # Send response
     # Print online members
     i = 1
+    print((ctx.guild.members))
     for user in ctx.guild.members:
         if user.status == discord.Status.online:
-            if (user.name != 'rollForGold'):
+            if (user.name != 'Weenie Bot General'):
                 number = str(np.random.randint(1, 100))
                 num = str(user.id)
                 ask = "*" + user.name + " rolls a " + number + "*"
+                print(ask)
                 await ctx.send(ask)
 
 
