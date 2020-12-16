@@ -6,7 +6,8 @@ from discord.ext.tasks import loop
 import time
 import asyncio
 #Import Spotify functions
-from spotifyFunction import create_playlist, removePlaylist, AddSong, getURI, get_userplaylist, refreshAuthorization, playListSongs
+from spotifyFunction import create_playlist, removePlaylist, AddSong, getURI, get_userplaylist, refreshAuthorization, playlist_songs
+
 
 # initialize dictionaries and lists for later
 people = {}
@@ -56,7 +57,6 @@ USER_ID = os.getenv('USER_ID')
 CLIENT_ID = os.getenv('CLIENT_ID')
 REFRESH_TOKEN = os.getenv('REFRESH_TOKEN')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')
-
 
 
 
@@ -122,7 +122,7 @@ async def on_ready():
 async def rolling(ctx):
     me = ctx.message.content
     nugNumber = me.replace('/nug ', '')
-    nugNumber = me.replace('/nug','')
+    nugNumber.strip()
     if nugNumber == "":
         print(nugNumber)
         await ctx.send('<:nugget:724445623906205756>')
@@ -391,18 +391,18 @@ async def lib(ctx):
     global playList
     global STOKEN
 
-    #read playlist songs and artrist and send on_message
-    response = playListSongs(playList,STOKEN)
-    item = response['items']
+    #read playlist songs and artist and send on_message
+    response = playlist_songs(playList,STOKEN)
+    playlist_item = response['items']
     i = 0
     
     #if items is empty then don't check for songs
-    if item == []:
+    if playlist_item == []:
         await ctx.send("No Songs")
     else:
-        for items in item:
-            artist = item[i]['track']['album']['artists'][0]['name']
-            track = item[i]['track']['name']
+        for items in playlist_item:
+            artist = items['track']['album']['artists'][0]['name']
+            track = items['track']['name']
 
             message = "**Track: **" + track + " **Artist: **" + artist
             await ctx.send(message)
@@ -448,13 +448,19 @@ async def lib(ctx):
 
     noCommand = str(me.replace('/addsong ', '')) #take off the command from the message
     both = noCommand.split(', ') #plit the message into song and artist
-    
-    songToAdd = 0
 
+    print("song to search: " + both[0] + " " + both[1])
+
+    songToAdd = 0
     if len(both) > 1: #check whether there is an song and an artist 
+        print("Both the artist and song name we input")
         song_name = both[0]
         artist = both[1]
         songToAdd = getURI(STOKEN,USER_ID,song_name,artist)
+
+        print("song to add: " + str(songToAdd))
+
+
 
     else: 
         await ctx.send("Put a comma between the artist and the song")
@@ -463,7 +469,8 @@ async def lib(ctx):
     if songToAdd == 0: #get song function outputs 0 if the song is not recognized ---> Check that
         await ctx.send('This is not a song')
     else:
-        await ctx.send('Song Added')
+        print("adding song")
+        await ctx.send('Song Added: ')
         AddSong(STOKEN,songToAdd,playList)
 
 

@@ -176,7 +176,7 @@ def refreshAuthorization(REFRESH_TOKEN,CLIENT_ID,CLIENT_SECRET):
 
     return response_json
 
-def playListSongs(playList,STOKEN):
+def playlist_songs(playList,STOKEN):
     query = "https://api.spotify.com/v1/playlists/{}/tracks".format(playList)
 
     response = requests.get(
