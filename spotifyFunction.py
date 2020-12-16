@@ -1,6 +1,5 @@
 import requests
 import json
-import pycurl
 import base64
 
 def get_userplaylist(TOKEN,user_id):
