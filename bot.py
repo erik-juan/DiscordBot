@@ -5,8 +5,9 @@ from discord.ext import commands, tasks  # Commands for bot listening, tasks TOD
 from discord.ext.tasks import loop
 import time
 import asyncio
-# NEW IMPORTS
-from spotifyFunction import create_playlist, removePlaylist, AddSong, getURI, get_userplaylist, refreshAuthorization
+#Import Spotify functions
+from spotifyFunction import create_playlist, removePlaylist, AddSong, getURI, get_userplaylist, refreshAuthorization, playlist_songs
+
 
 # initialize dictionaries and lists for later
 people = {}
@@ -19,7 +20,7 @@ pollDict = {}
 fullResponse = ''
 emojiResponse = []
 
-# for spotify
+# start ontime at 0 and start an empty string for the playlist id
 playList = ""
 playListOnTime = 0
 
@@ -50,6 +51,7 @@ emojiLetters = ["\N{REGIONAL INDICATOR SYMBOL LETTER A}",
                 "\N{REGIONAL INDICATOR SYMBOL LETTER Y}",
                 "\N{REGIONAL INDICATOR SYMBOL LETTER Z}"]
 
+#get tokens
 TOKEN = os.getenv('DISCORD_SECRET')
 USER_ID = os.getenv('USER_ID')
 CLIENT_ID = os.getenv('CLIENT_ID')
@@ -58,18 +60,21 @@ CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 
 
 
+
+#get spotify token
 resp = refreshAuthorization(REFRESH_TOKEN,CLIENT_ID,CLIENT_SECRET)
 STOKEN = resp['access_token']
 refreshTimer = time.time()
 print("Token Refreshed")
+
+#start client and bot
 intents = discord.Intents.all()
 client = discord.Client()
-
-# Set prefix
+#set bot prefix and give intents
 bot = commands.Bot(command_prefix='/',intents=intents)  # bot will listen for "/"
 
 
-@bot.event  # print when connected
+@bot.event  # print when connected and start a spotify playlist is not created already
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
     # create initial spotify playlist
@@ -115,16 +120,23 @@ async def on_ready():
 
 @bot.command(name='nug')  # look for prefix + 'nug'
 async def rolling(ctx):
-    response = '<:nugget:724445623906205756>'  # Create emoji response
+    me = ctx.message.content
+    nugNumber = me.replace('/nug ', '')
+    nugNumber.strip()
+    if nugNumber == "":
+        print(nugNumber)
+        await ctx.send('<:nugget:724445623906205756>')
+    else:
+        nugNumber = int(nugNumber)
+        response = '<:nugget:724445623906205756>' * nugNumber  # Create emoji response
+        if len(response) < 2000:
+            await ctx.send(response)  # send
+        else:
+            await ctx.send("That's too many nugs")
+    
 
-    await ctx.send(response)  # send
 
 
-@bot.command(name='2nug')  # look for prefix + '2nug'
-async def rolling(ctx):
-    response = '<:nugget:724445623906205756>' + '<:nugget:724445623906205756>'  # Create emoji response
-
-    await ctx.send(response)  # send
 
 
 @bot.command(name='rollforgold')  # look for prefix+'roll'
@@ -247,11 +259,14 @@ async def lib(ctx):
 @bot.command(name='alltimers')
 async def lib(ctx):
     global timersKey
-    for keys in timersKey:  # loop through all the people
+    for keys in timersKey:  # loop through all the timers and send message
         print(keys)
-        list = timersKey.get(keys)  # get the values
+        list = timersKey.get(keys)  
         timeLeft = int(list[0] - ((time.time() / 60) - list[1]))  # calculate time left
         await ctx.send(keys + " has " + str(timeLeft) + " minutes to start playing WoW")
+    #send message if there are no timers
+    if timersKey == {}:
+        await ctx.send("There are no timers")
 
 
 # Create a task to check for timer end and send message (loops once a second)
@@ -264,7 +279,7 @@ async def fun():
     global USER_ID
     global refreshTimer
 
-    # loop through all keys
+    # Check all timers for end time
     for keys in timersKey:
         list = timersKey.get(keys)
         readyCheck = (time.time() / 60) - list[1]
@@ -279,15 +294,16 @@ async def fun():
             return
         else:
             print(readyCheck)
-        print('looping')
-    #refresh access token
+        
+
+    #refresh access token every 50 minutes
     if time.time() - refreshTimer > 3000:
         resp = refreshAuthorization(REFRESH_TOKEN,CLIENT_ID,CLIENT_SECRET)
         STOKEN = resp['access_token']
         refreshTimer = time.time()
         print("Token Refreshed")
 
-    #check spotify end
+    #check if spotify playlist should be restarted 
     playListOffTime = playListOnTime + 360
     if (playListOffTime - (time.time()/60)) < 0:
         #remove playlist
@@ -299,7 +315,6 @@ async def fun():
         items = playlistResponse['items']
         # Check if playlist already created
         playlistNames = []
-
         for keys in items:
             playlistNames.append(keys['name'])
             name = keys['name']
@@ -328,6 +343,7 @@ async def lib(ctx):
     timer = str((int(playListOffTime - time.time()/60)))
     message = "The playlist has **" + timer + "** minutes before it self destructs"
     await ctx.send(message)
+
 #delete playlist restart timer
 @bot.command(name='restartPlaylistEverything')
 async def lib(ctx):
@@ -338,7 +354,6 @@ async def lib(ctx):
     #delete playlist
     removePlaylist(STOKEN,playList)
 
-    #restart playlist
     #creat new
     # read playlists
     playlistResponse = get_userplaylist(STOKEN, USER_ID)
@@ -346,6 +361,7 @@ async def lib(ctx):
     # Check if playlist already created
     playlistNames = []
 
+    #check if there is already a playlist
     for keys in items:
         playlistNames.append(keys['name'])
         name = keys['name']
@@ -355,6 +371,7 @@ async def lib(ctx):
 
     print(playlistNames)
 
+    #make play list or not depending if there is a playlist already
     if 'Weenie Bot Playlist' in playlistNames:
         print('There is already a Play List')
         print(playList)
@@ -363,13 +380,36 @@ async def lib(ctx):
         playList = create_playlist(STOKEN, USER_ID)
         print(playList)
 
+    #reset the on time
     playListOnTime = time.time() / 60
     await ctx.send("Playlist Restarted")
 
 
+#get playlist item details
+@bot.command(name = "songs")
+async def lib(ctx):
+    global playList
+    global STOKEN
+
+    #read playlist songs and artist and send on_message
+    response = playlist_songs(playList,STOKEN)
+    playlist_item = response['items']
+    i = 0
+    
+    #if items is empty then don't check for songs
+    if playlist_item == []:
+        await ctx.send("No Songs")
+    else:
+        for items in playlist_item:
+            artist = items['track']['album']['artists'][0]['name']
+            track = items['track']['name']
+
+            message = "**Track: **" + track + " **Artist: **" + artist
+            await ctx.send(message)
+            i +=1
 
 
-#get playlist URL
+#get playlist URL and send it in message
 @bot.command(name = 'playlist')
 async def lib(ctx):
     global playList
@@ -406,24 +446,31 @@ async def lib(ctx):
     me = ctx.message.content  # read message
     me = me.lower()  # set to lower case
 
-    noCommand = str(me.replace('/addsong ', ''))
-    both = noCommand.split(', ')
-    
-    songToAdd = 0
+    noCommand = str(me.replace('/addsong ', '')) #take off the command from the message
+    both = noCommand.split(', ') #plit the message into song and artist
 
-    if len(both) > 1:
+    print("song to search: " + both[0] + " " + both[1])
+
+    songToAdd = 0
+    if len(both) > 1: #check whether there is an song and an artist 
+        print("Both the artist and song name we input")
         song_name = both[0]
         artist = both[1]
         songToAdd = getURI(STOKEN,USER_ID,song_name,artist)
 
-    else:
+        print("song to add: " + str(songToAdd))
+
+
+
+    else: 
         await ctx.send("Put a comma between the artist and the song")
 
 
-    if songToAdd == 0:
+    if songToAdd == 0: #get song function outputs 0 if the song is not recognized ---> Check that
         await ctx.send('This is not a song')
     else:
-        await ctx.send('Song Added')
+        print("adding song")
+        await ctx.send('Song Added: ')
         AddSong(STOKEN,songToAdd,playList)
 
 

@@ -1,5 +1,6 @@
 import requests
 import json
+import pycurl
 import base64
 
 def get_userplaylist(TOKEN,user_id):
@@ -174,3 +175,20 @@ def refreshAuthorization(REFRESH_TOKEN,CLIENT_ID,CLIENT_SECRET):
     response_json = response.json()
 
     return response_json
+
+def playlist_songs(playList,STOKEN):
+    query = "https://api.spotify.com/v1/playlists/{}/tracks".format(playList)
+
+    response = requests.get(
+        query,
+        headers={
+            "Content-Type": "discordIntegration/json",
+            "Authorization": "Bearer {}".format(STOKEN)
+        }
+    )
+
+    response_json = response.json()
+    
+    return response_json
+
+
