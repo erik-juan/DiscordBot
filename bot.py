@@ -394,7 +394,6 @@ async def lib(ctx):
     #read playlist songs and artist and send on_message
     response = playlist_songs(playList,STOKEN)
     playlist_item = response['items']
-    i = 0
     
     #if items is empty then don't check for songs
     if playlist_item == []:
