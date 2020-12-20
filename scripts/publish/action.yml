@@ -1,0 +1,6 @@
+name: "Publish"
+description: "Publish to AWS EC2"
+
+runs:
+  using: "docker"
+  image: "Dockerfile"
