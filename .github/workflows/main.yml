@@ -1,9 +1,0 @@
-name: Push Pipeline
-on: push
-jobs:
-    build:
-      name: Publish
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v1
-        - uses: ./scripts/publish
