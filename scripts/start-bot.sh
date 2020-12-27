@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo touch ../start-bot-run
+sudo nohup pipenv run python3.7 ../bot.py
