@@ -1,2 +1,2 @@
 #!/bin/bash
-touch ../start-bot-run
+sudo touch ../start-bot-run
