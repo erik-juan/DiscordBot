@@ -1,7 +1,8 @@
 name: Push Pipeline
-on: push
-  branches:
-    - master
+on: 
+  push:
+    branches:
+      - master
 jobs:
   deploy:
     name: Deploy
