@@ -58,15 +58,8 @@ CLIENT_ID = os.getenv('CLIENT_ID')
 REFRESH_TOKEN = os.getenv('REFRESH_TOKEN')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 
-
-
-
 #get spotify token
-print(REFRESH_TOKEN)
-print(CLIENT_ID)
-print(CLIENT_SECRET)
 resp = refreshAuthorization(REFRESH_TOKEN,CLIENT_ID,CLIENT_SECRET)
-print(resp)
 STOKEN = resp['access_token']
 refreshTimer = time.time()
 print("Token Refreshed")
