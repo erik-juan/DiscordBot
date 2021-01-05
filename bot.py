@@ -121,10 +121,9 @@ async def on_ready():
 @bot.command(name='nug')  # look for prefix + 'nug'
 async def rolling(ctx):
     me = ctx.message.content
-    nugNumber = me.replace('/nug ', '')
+    nugNumber = me.replace('/nug', '')
     nugNumber.strip()
     if nugNumber == "":
-        print(nugNumber)
         await ctx.send('<:nugget:724445623906205756>')
     else:
         nugNumber = int(nugNumber)
