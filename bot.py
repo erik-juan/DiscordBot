@@ -8,6 +8,7 @@ import asyncio
 #Import Spotify functions
 from spotifyFunction import create_playlist, removePlaylist, AddSong, getURI, get_userplaylist, refreshAuthorization, playlist_songs
 
+DEFAULT_GAME = "Minecraft"
 
 # initialize dictionaries and lists for later
 people = {}
@@ -219,7 +220,8 @@ async def lib(ctx):
     await ctx.send(link)
 
 
-# sets up timer for when someone has to get on WOW
+
+# sets up timer for when someone has to get on whatever game we're playing
 @bot.command(name='giveme')
 async def lib(ctx):
     global timersKey
@@ -231,7 +233,7 @@ async def lib(ctx):
     min = int(str(me.replace('/giveme', '')))
 
     minStr = str(min)
-    await ctx.send(author + " has " + minStr + " minutes to start playing WOW")
+    await ctx.send(f"{author} has {minStr} minutes to start playing {DEFAULT_GAME}")
 
     start = (time.time()) / 60  # set start time
     chn = ctx  # save the message context. Used to send the message back to the same guild it came from
@@ -249,7 +251,7 @@ async def lib(ctx):
         list = timersKey.get(author)
         timeLeft = int(list[0] - ((time.time() / 60) - list[1]))
 
-        await ctx.send(author + " has " + str(timeLeft) + " minutes to start playing WoW")
+        await ctx.send(f"{author} has {timeLeft} minutes to start playing {DEFAULT_GAME}")
     else:
         await ctx.send("You do not have a timer")
 
@@ -262,7 +264,8 @@ async def lib(ctx):
         print(keys)
         list = timersKey.get(keys)  
         timeLeft = int(list[0] - ((time.time() / 60) - list[1]))  # calculate time left
-        await ctx.send(keys + " has " + str(timeLeft) + " minutes to start playing WoW")
+        print(keys)
+        await ctx.send(f"{keys} has {timeLeft} minutes to start playing {DEFAULT_GAME}")
     #send message if there are no timers
     if timersKey == {}:
         await ctx.send("There are no timers")
@@ -289,7 +292,7 @@ async def fun():
             timersKey.pop(keys)  # detele the dictionary value
             print(timersKey)
             channel = list[2]  # get contect from dictionary
-            await channel.send('@' + keys + ' needs to start playing WOW right fucking now')  # send message
+            await channel.send(f"@ {keys} needs to start playing {DEFAULT_GAME} right fucking now")  # send message
             return
         else:
             print(readyCheck)
