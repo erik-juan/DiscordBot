@@ -225,7 +225,7 @@ async def lib(ctx):
 @bot.command(name='giveme')
 async def lib(ctx):
     global timersKey
-    author = str(ctx.message.author)
+    author = ctx.message.author
     me = str(ctx.message.content)  # read message
     me = me.lower()  # set to lower case
     # take out the bot command from text
@@ -233,7 +233,7 @@ async def lib(ctx):
     min = int(str(me.replace('/giveme', '')))
 
     minStr = str(min)
-    await ctx.send(f"{author} has {minStr} minutes to start playing {DEFAULT_GAME}")
+    await ctx.send(f"{author.name} has {minStr} minutes to start playing {DEFAULT_GAME}")
 
     start = (time.time()) / 60  # set start time
     chn = ctx  # save the message context. Used to send the message back to the same guild it came from
@@ -245,13 +245,13 @@ async def lib(ctx):
 @bot.command(name='timer')
 async def lib(ctx):
     global timersKey
-    author = str(ctx.message.author)
+    author = ctx.message.author
 
     if author in timersKey:  # if the author is in
         list = timersKey.get(author)
         timeLeft = int(list[0] - ((time.time() / 60) - list[1]))
 
-        await ctx.send(f"{author} has {timeLeft} minutes to start playing {DEFAULT_GAME}")
+        await ctx.send(f"{author.name} has {timeLeft} minutes to start playing {DEFAULT_GAME}")
     else:
         await ctx.send("You do not have a timer")
 
@@ -264,8 +264,7 @@ async def lib(ctx):
         print(keys)
         list = timersKey.get(keys)  
         timeLeft = int(list[0] - ((time.time() / 60) - list[1]))  # calculate time left
-        print(keys)
-        await ctx.send(f"{keys} has {timeLeft} minutes to start playing {DEFAULT_GAME}")
+        await ctx.send(f"{keys.name} has {timeLeft} minutes to start playing {DEFAULT_GAME}")
     #send message if there are no timers
     if timersKey == {}:
         await ctx.send("There are no timers")
@@ -288,11 +287,11 @@ async def fun():
 
         # if the timer is up send message to same guild it came from. (using context in dict)
         if (readyCheck >= list[0]):
-            print(keys + 'is ready')
+            print(keys.name + 'is ready')
             timersKey.pop(keys)  # detele the dictionary value
             print(timersKey)
             channel = list[2]  # get contect from dictionary
-            await channel.send(f"@ {keys} needs to start playing {DEFAULT_GAME} right fucking now")  # send message
+            await channel.send(f"{keys.mention} needs to start playing {DEFAULT_GAME} right fucking now")  # send message
             return
         else:
             print(readyCheck)
