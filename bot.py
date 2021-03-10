@@ -255,11 +255,15 @@ async def lib(ctx):
     else:
         await ctx.send("You do not have a timer")
 
+#RESTART FUNCTION
+@bot.comman(name='restartFun')
+async def lib(ctx):
+    await ctx.send("function restarted")
+    fun.start()
 
 # Print out all active timers
 @bot.command(name='alltimers')
 async def lib(ctx):
-    fun.start()
     global timersKey
     for keys in timersKey:  # loop through all the timers and send message
         print(keys)
