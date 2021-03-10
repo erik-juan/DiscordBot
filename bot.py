@@ -256,7 +256,7 @@ async def lib(ctx):
         await ctx.send("You do not have a timer")
 
 #RESTART FUNCTION
-@bot.comman(name='restartFun')
+@bot.command(name='restartFun')
 async def lib(ctx):
     await ctx.send("function restarted")
     fun.start()
