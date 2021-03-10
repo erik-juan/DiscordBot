@@ -8,7 +8,7 @@ import asyncio
 #Import Spotify functions
 from spotifyFunction import create_playlist, removePlaylist, AddSong, getURI, get_userplaylist, refreshAuthorization, playlist_songs
 
-DEFAULT_GAME = "League"
+DEFAULT_GAME = "Valheim"
 
 # initialize dictionaries and lists for later
 people = {}
