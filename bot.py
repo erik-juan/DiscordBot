@@ -259,6 +259,7 @@ async def lib(ctx):
 # Print out all active timers
 @bot.command(name='alltimers')
 async def lib(ctx):
+    fun.start()
     global timersKey
     for keys in timersKey:  # loop through all the timers and send message
         print(keys)
