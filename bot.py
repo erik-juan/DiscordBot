@@ -261,6 +261,7 @@ async def lib(ctx):
     await ctx.send("function restarted")
     fun.start()
 
+
 # Print out all active timers
 @bot.command(name='alltimers')
 async def lib(ctx):
