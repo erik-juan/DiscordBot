@@ -11,11 +11,7 @@ permissions:
       - directory
       - file
 hooks:
-  ApplicationStop:
-    - location: scripts/stop-bot.sh
-      timeout: 300
-      runas: ubuntu
   ApplicationStart:
-    - location: scripts/start-bot.sh
+    - location: make build and make run
       timeout: 300
       runas: ubuntu
