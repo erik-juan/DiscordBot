@@ -9,8 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        appname: ['DiscordBot']
-        deploy-group: ['discord-bot-2']
+        appname: ['discord_bot']
+        deploy-group: ['discord_bot']
         s3-bucket: ['discord-bot-code-deploy']
         s3-filename: ['discord-bot-code-deploy-${{ github.sha }}']
 
