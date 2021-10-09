@@ -6,4 +6,4 @@ COPY spotifyFunction.py spotifyFunction.py
 
 RUN ["python3", "-m", "pip", "install", "-r", "requirements.txt"]
 
-CMD python bot.py 1>>logs.txt 2>>logs.txt
+CMD python bot.py 1>>logs/logs.txt 2>>logs/logs.txt
