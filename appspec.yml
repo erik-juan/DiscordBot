@@ -11,6 +11,10 @@ permissions:
       - directory
       - file
 hooks:
+  ApplicationStop:
+    - location: ls
+      timeout: 300
+      runas: ubuntu
   ApplicationStart:
     - location: make build and make run
       timeout: 300
