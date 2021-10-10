@@ -2,9 +2,9 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /home/ubuntu
+    destination: /home/ubuntu/discord_bot
 permissions:
-  - object: /home/ubuntu
+  - object: /home/ubuntu/discord_bot
     owner: ubuntu
     group: ubuntu
     type:
@@ -12,6 +12,6 @@ permissions:
       - file
 hooks:
   ApplicationStart:
-    - location: make build and make run
+    - location: scripts/start-bot.sh
       timeout: 300
       runas: ubuntu
