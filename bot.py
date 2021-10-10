@@ -10,8 +10,6 @@ from spotifyFunction import create_playlist, removePlaylist, AddSong, getURI, ge
 
 DEFAULT_GAME = "the decided fucking game"
 
-print("startup")
-
 # initialize dictionaries and lists for later
 people = {}
 timersKey = {}
