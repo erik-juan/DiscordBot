@@ -238,8 +238,9 @@ async def lib(ctx):
     start = (time.time()) / 60  # set start time
     chn = ctx  # save the message context. Used to send the message back to the same guild it came from
     timersKey.update({author: [min, start, chn]})  # update timer dictionary with list of values
+    print('timersKey')
     print(timersKey)
-
+    print(f"timersKey - {author.name}: {author.mention}")
 
 # print out timer for message author
 @bot.command(name='timer')
