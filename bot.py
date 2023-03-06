@@ -1,8 +1,8 @@
 import os
+import subprocess
 import discord
 import numpy as np
 from discord.ext import commands, tasks  # Commands for bot listening, tasks TODO outside of commands
-from discord.ext.tasks import loop
 import time
 import asyncio
 #Import Spotify functions
@@ -257,8 +257,8 @@ async def lib(ctx):
         await ctx.send("You do not have a timer")
 
 #RESTART FUNCTION
-@bot.command(name='restartFun')
-async def lib(ctx):
+@bot.command(aliases=['restartFun', 'restartfun', 'restartfunc', 'restartFunc'])
+async def restart_fun(ctx):
     await ctx.send("function restarted")
     fun.start()
 
@@ -481,6 +481,25 @@ async def lib(ctx):
         AddSong(STOKEN,songToAdd,playList)
 
 
+# paths would be better as relative and are dependent on box info - not robust but I'm lazy
+@bot.command(aliases=['changegame', 'changeGame', 'switchgame', 'switchGame'])
+async def change_game(ctx, *args):
+    valid_games = ["minecraft", "valheim"]
+    
+    invalid_game_message = f"invalid game; choose from one of {tuple(valid_games)}"
+    if len(args) != 1:
+        await ctx.send(invalid_game_message)
+    chosen_game_name = args[0].lower()
+    if chosen_game_name not in valid_games:
+        await ctx.send(invalid_game_message)
+        return
+    
+    await ctx.send("terminating running containers for other games")
+    for game_name in valid_games:
+        if game_name != chosen_game_name:
+            subprocess.run(["docker", "compose", "-f", f"/{game_name}/compose.yml", "down"]) 
+    await ctx.send(f"starting {chosen_game_name} container (give me like 5 minutes before trying to login...)")
+    subprocess.run(["docker", "compose", "-f", f"/{chosen_game_name}/compose.yml", "up", "-d"])
 
 
 

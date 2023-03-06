@@ -1,0 +1,13 @@
+services:
+  discord_bot:
+    image: discord_bot
+    build: .
+    env_file: .env
+
+    tty: true
+    restart: unless-stopped
+    volumes:
+      # attach a directory relative to the directory containing this compose file
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /home/ubuntu/valheim:/valheim
+      - /home/ubuntu/erik-combined-server:/minecraft
